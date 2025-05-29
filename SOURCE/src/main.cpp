@@ -47,9 +47,9 @@ void encrypt_and_save() {
     file.write(pad, 16);
     file.write(cipher, 16);
     file.close();
-    Serial.println("OTP encryption and storage done.");
+    // Serial.println("OTP encryption and storage done.");
   } else {
-    Serial.println("Failed to write OTP data.");
+    // Serial.println("Failed to write OTP data.");
   }
 }
 
@@ -77,25 +77,25 @@ int decrypt_and_check() {
 }
 
 void setup() {
-  Serial.begin(9600);
+  // Serial.begin(9600);
   Wire.begin();
   pinMode(transistorPin, OUTPUT);
 
   sensor.setTimeout(500);
   if (!sensor.init()) {
-    Serial.println("Failed to detect and initialize VL53L0X!");
+    // Serial.println("Failed to detect and initialize VL53L0X!");
     while (1);
   }
 
 
   if (checkSDCardInserted()) {
-    Serial.println("SD card detected.");
+    // Serial.println("SD card detected.");
     if (!SD.exists(filename)) {
-      Serial.println("Creating OTP secret file...");
+      // Serial.println("Creating OTP secret file...");
       encrypt_and_save();
     }
   } else {
-    Serial.println("No SD card at startup.");
+    // Serial.println("No SD card at startup.");
   }
   randomSeed(42); // Seed
 }
@@ -104,12 +104,12 @@ void setup() {
 int readDistance() {
   int distance = sensor.readRangeSingleMillimeters();
 
-  Serial.print("Distance: ");
-  Serial.print(distance);
-  Serial.println(" mm");
+  // Serial.print("Distance: ");
+  // Serial.print(distance);
+  // Serial.println(" mm");
 
   if (sensor.timeoutOccurred()) {
-    Serial.println("Sensor timeout!");
+    // Serial.println("Sensor timeout!");
     return -1;
   }
 
@@ -120,15 +120,15 @@ void loop() {
   if (alarm || readDistance() > 60) {
     switch (decrypt_and_check()) {
     case SD_NOT_INSERTED:
-      Serial.println("SD not inserted.");
+      // Serial.println("SD not inserted.");
       alarm = true;
       break;
     case SD_WRONG_OR_ABSENT_SECRET:
-      Serial.println("Wrong or missing secret.");
+      // Serial.println("Wrong or missing secret.");
       alarm = true;
       break;
     case SD_VALID_SECRET:
-      Serial.println("Valid secret verified!");
+      // Serial.println("Valid secret verified!");
       alarm = false;
       break;
     }
@@ -136,7 +136,7 @@ void loop() {
   
   if(alarm) {
     digitalWrite(transistorPin, HIGH);
-    Serial.println("ALARM ON");
+    // Serial.println("ALARM ON");
   } else {
     digitalWrite(transistorPin, LOW);
   }
